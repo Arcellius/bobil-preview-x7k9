@@ -477,181 +477,117 @@
             </span>
           </div>
 
-          {/* Two-column comparison: Side profile + Top-down */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* 2x2 grid: each row forces matching heights across columns */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 16px" }}>
+            {/* Row 1: Headers */}
+            <div className="text-xs text-gray-400 font-medium text-center" style={{ paddingBottom: "2px" }}>Sideprofil</div>
+            <div className="text-xs text-gray-400 font-medium text-center" style={{ paddingBottom: "2px" }}>Sett ovenfra</div>
 
-            {/* LEFT: Side profile — stacked, proportionally scaled */}
-            <div>
-              <div className="text-xs text-gray-400 font-medium mb-2 text-center">Sideprofil</div>
-              <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", gap: "0px", alignItems: "flex-start" }} className="rounded-lg">
-                {/* RV label */}
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(37,99,235,0.6)", flexShrink: 0 }}></span>
-                  <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
-                </div>
-                {/* RV side image — scaled to proportion */}
-                <div style={{ width: rvPct + "%" }}>
-                  <img
-                    src={rvImage}
-                    alt={category}
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      height: "auto",
-                      filter: "drop-shadow(0 0 5px rgba(37,99,235,0.4)) drop-shadow(0 0 1px rgba(37,99,235,0.6))",
-                      opacity: 0.85
-                    }}
-                  />
-                </div>
-                {/* RV length dimension line — same width as image */}
-                <div style={{ width: rvPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                  <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(rvLength / 1000).toFixed(2)}m</span>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
-                </div>
-
-                {/* Compare vehicle label */}
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px", marginBottom: "2px" }}>
-                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(194,100,30,0.6)", flexShrink: 0 }}></span>
-                  <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
-                </div>
-                {/* Compare vehicle side image — scaled to proportion */}
-                <div style={{ width: compPct + "%" }}>
-                  <img
-                    src={compareVehicle.image}
-                    alt={compareVehicle.name}
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      height: "auto",
-                      filter: "drop-shadow(0 0 5px rgba(194,100,30,0.4)) drop-shadow(0 0 1px rgba(194,100,30,0.6))",
-                      opacity: 0.7
-                    }}
-                  />
-                </div>
-                {/* Compare vehicle length dimension line — same width as image */}
-                <div style={{ width: compPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                  <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(compareVehicle.length_mm / 1000).toFixed(2)}m</span>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
-                </div>
+            {/* Row 2: RV — side profile (left) + top-down (right) */}
+            <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", alignItems: "flex-start" }} className="rounded-lg">
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
+                <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(37,99,235,0.6)", flexShrink: 0 }}></span>
+                <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
+              </div>
+              <div style={{ position: "relative", width: rvPct + "%" }}>
+                <img src={rvImage} alt={category} style={{ display: "block", width: "100%", height: "auto", filter: "drop-shadow(0 0 5px rgba(37,99,235,0.4)) drop-shadow(0 0 1px rgba(37,99,235,0.6))", opacity: 0.85 }} />
+                {variant.height_mm && (
+                  <div style={{ position: "absolute", top: "0", left: "-22px", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                    <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(variant.height_mm / 1000).toFixed(2)}m</span>
+                    <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                    <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                  </div>
+                )}
+              </div>
+              <div style={{ width: rvPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
+                <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
+                <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(rvLength / 1000).toFixed(2)}m</span>
+                <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
+              </div>
+            </div>
+            <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", alignItems: "flex-end" }} className="rounded-lg">
+              <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
+                <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(37,99,235,0.6)", flexShrink: 0 }}></span>
+                <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
+              </div>
+              <div style={{ position: "relative", width: rvPct + "%" }}>
+                <img src={rvImageTop} alt={category + " ovenfra"} style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }} />
+                {variant.width_mm && (
+                  <div style={{ position: "absolute", top: "11%", bottom: "6%", left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                    <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(variant.width_mm / 1000).toFixed(2)}m</span>
+                    <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                    <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                  </div>
+                )}
+              </div>
+              <div style={{ width: rvPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
+                <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
+                <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(rvLength / 1000).toFixed(2)}m</span>
+                <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
               </div>
             </div>
 
-            {/* RIGHT: Top-down view — stacked, proportionally scaled */}
-            <div>
-              <div className="text-xs text-gray-400 font-medium mb-2 text-center">Sett ovenfra</div>
-              <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", gap: "0px", alignItems: "flex-end" }} className="rounded-lg">
-                {/* RV label */}
-                <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(37,99,235,0.6)", flexShrink: 0 }}></span>
-                  <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
-                </div>
-                {/* RV top image — scaled to proportion, right-aligned */}
-                <div style={{ position: "relative", width: rvPct + "%" }}>
-                  <img
-                    src={rvImageTop}
-                    alt={category + " ovenfra"}
-                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }}
-                  />
-                  {/* Width dimension line (vertical, in front of vehicle) */}
-                  {variant.width_mm && (
-                    <div style={{ position: "absolute", top: "0", left: "-22px", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                      <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                      <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                      <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(variant.width_mm / 1000).toFixed(2)}m</span>
-                      <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                      <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                    </div>
-                  )}
-                </div>
-                {/* RV length dimension line — same width as image */}
-                <div style={{ width: rvPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                  <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(rvLength / 1000).toFixed(2)}m</span>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
-                </div>
-
-                {/* Compare vehicle label */}
-                <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", marginTop: "8px", marginBottom: "2px" }}>
-                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(194,100,30,0.6)", flexShrink: 0 }}></span>
-                  <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
-                </div>
-                {/* Compare vehicle top image — scaled to proportion, right-aligned */}
-                <div style={{ position: "relative", width: compPct + "%" }}>
-                  <img
-                    src={compareVehicle.imageTop}
-                    alt={compareVehicle.name + " ovenfra"}
-                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }}
-                  />
-                  {/* Width dimension line (in front of vehicle) */}
-                  {compareVehicle.width_mm && (
+            {/* Row 3: Compare vehicle — side profile (left) + top-down (right) */}
+            <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", alignItems: "flex-start" }} className="rounded-lg">
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
+                <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(194,100,30,0.6)", flexShrink: 0 }}></span>
+                <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
+              </div>
+              <div style={{ width: compPct + "%", flex: 1, display: "flex", alignItems: "flex-end" }}>
+                <div style={{ position: "relative", width: "100%" }}>
+                  <img src={compareVehicle.image} alt={compareVehicle.name} style={{ display: "block", width: "100%", height: "auto", filter: "drop-shadow(0 0 5px rgba(194,100,30,0.4)) drop-shadow(0 0 1px rgba(194,100,30,0.6))", opacity: 0.7 }} />
+                  {compareVehicle.height_mm && (
                     <div style={{ position: "absolute", top: "0", left: "-22px", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
                       <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                      <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(compareVehicle.width_mm / 1000).toFixed(2)}m</span>
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(compareVehicle.height_mm / 1000).toFixed(2)}m</span>
                       <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
                       <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
                     </div>
                   )}
                 </div>
-                {/* Compare vehicle length dimension line — same width as image */}
-                <div style={{ width: compPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                  <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(compareVehicle.length_mm / 1000).toFixed(2)}m</span>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                  <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
-                </div>
+              </div>
+              <div style={{ width: compPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
+                <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
+                <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(compareVehicle.length_mm / 1000).toFixed(2)}m</span>
+                <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
               </div>
             </div>
-
-          </div>
-
-          {/* Dimension comparison cards */}
-          <div className="grid grid-cols-3 gap-3 mt-4">
-            <div className="bg-gray-50 rounded-lg p-3 text-center">
-              <div className="text-xs text-gray-500 mb-1">Lengde</div>
-              <div className="text-sm font-bold text-gray-900">{(rvLength / 1000).toFixed(2)}m</div>
-              <div className="text-xs text-gray-400 mt-0.5">{rvLength > compareVehicle.length_mm ? "+" : ""}{((rvLength - compareVehicle.length_mm) / 1000).toFixed(2)}m</div>
+            <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", alignItems: "flex-end" }} className="rounded-lg">
+              <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
+                <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(194,100,30,0.6)", flexShrink: 0 }}></span>
+                <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
+              </div>
+              <div style={{ position: "relative", width: compPct + "%", flex: 1, display: "flex", alignItems: "flex-end" }}>
+                <img src={compareVehicle.imageTop} alt={compareVehicle.name + " ovenfra"} style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }} />
+                {compareVehicle.width_mm && (
+                  <div style={{ position: "absolute", top: "10%", bottom: "4%", left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                    <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(compareVehicle.width_mm / 1000).toFixed(2)}m</span>
+                    <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                    <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                  </div>
+                )}
+              </div>
+              <div style={{ width: compPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
+                <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
+                <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(compareVehicle.length_mm / 1000).toFixed(2)}m</span>
+                <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
+              </div>
             </div>
-            {(variant.width_mm) && (
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-xs text-gray-500 mb-1">Bredde</div>
-                <div className="text-sm font-bold text-gray-900">{(variant.width_mm / 1000).toFixed(2)}m</div>
-                <div className="text-xs text-gray-400 mt-0.5">{variant.width_mm > compareVehicle.width_mm ? "+" : ""}{((variant.width_mm - compareVehicle.width_mm) / 1000).toFixed(2)}m</div>
-              </div>
-            )}
-            {(variant.height_mm) && (
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-xs text-gray-500 mb-1">Høyde</div>
-                <div className="text-sm font-bold text-gray-900">{(variant.height_mm / 1000).toFixed(2)}m</div>
-                <div className="text-xs text-gray-400 mt-0.5">{variant.height_mm > compareVehicle.height_mm ? "+" : ""}{((variant.height_mm - compareVehicle.height_mm) / 1000).toFixed(2)}m</div>
-              </div>
-            )}
-          </div>
-
-          {/* Comparison vehicle dimensions */}
-          <div className="grid grid-cols-3 gap-3 mt-1">
-            <div className="text-center">
-              <div className="text-xs text-gray-400">{compareVehicle.shortName}: {(compareVehicle.length_mm / 1000).toFixed(2)}m</div>
-            </div>
-            {(variant.width_mm && compareVehicle.width_mm) && (
-              <div className="text-center">
-                <div className="text-xs text-gray-400">{(compareVehicle.width_mm / 1000).toFixed(2)}m</div>
-              </div>
-            )}
-            {(variant.height_mm && compareVehicle.height_mm) && (
-              <div className="text-center">
-                <div className="text-xs text-gray-400">{(compareVehicle.height_mm / 1000).toFixed(2)}m</div>
-              </div>
-            )}
           </div>
 
           <p className="text-xs text-gray-400 mt-4 text-center">
