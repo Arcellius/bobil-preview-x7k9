@@ -405,6 +405,11 @@
       const rvImage = VEHICLE_IMAGES[category] || VEHICLE_IMAGES.delintegrert;
       const rvImageTop = VEHICLE_IMAGES_TOP[category] || VEHICLE_IMAGES_TOP.delintegrert;
 
+      // Proportional scaling for both views
+      const maxLen = Math.max(rvLength, compareVehicle.length_mm || 0);
+      const rvPct = (rvLength / maxLen) * 100;
+      const compPct = ((compareVehicle.length_mm || 0) / maxLen) * 100;
+
       // Group options by category for the dropdown
       const grouped = useMemo(() => {
         const groups = {};
@@ -478,11 +483,6 @@
             {/* LEFT: Side profile — stacked, proportionally scaled */}
             <div>
               <div className="text-xs text-gray-400 font-medium mb-2 text-center">Sideprofil</div>
-              {(() => {
-                const maxLen = Math.max(rvLength, compareVehicle.length_mm || 0);
-                const rvPct = (rvLength / maxLen) * 100;
-                const compPct = ((compareVehicle.length_mm || 0) / maxLen) * 100;
-                return (
               <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", gap: "0px", alignItems: "flex-start" }} className="rounded-lg">
                 {/* RV label */}
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
@@ -490,7 +490,7 @@
                   <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
                 </div>
                 {/* RV side image — scaled to proportion */}
-                <div style={{ width: `${rvPct}%` }}>
+                <div style={{ width: rvPct + "%" }}>
                   <img
                     src={rvImage}
                     alt={category}
@@ -504,7 +504,7 @@
                   />
                 </div>
                 {/* RV length dimension line — same width as image */}
-                <div style={{ width: `${rvPct}%`, display: "flex", alignItems: "center", marginTop: "2px" }}>
+                <div style={{ width: rvPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
                   <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
                   <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
                   <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(rvLength / 1000).toFixed(2)}m</span>
@@ -518,7 +518,7 @@
                   <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
                 </div>
                 {/* Compare vehicle side image — scaled to proportion */}
-                <div style={{ width: `${compPct}%` }}>
+                <div style={{ width: compPct + "%" }}>
                   <img
                     src={compareVehicle.image}
                     alt={compareVehicle.name}
@@ -532,7 +532,7 @@
                   />
                 </div>
                 {/* Compare vehicle length dimension line — same width as image */}
-                <div style={{ width: `${compPct}%`, display: "flex", alignItems: "center", marginTop: "2px" }}>
+                <div style={{ width: compPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
                   <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
                   <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
                   <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(compareVehicle.length_mm / 1000).toFixed(2)}m</span>
@@ -540,27 +540,25 @@
                   <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
                 </div>
               </div>
-                );
-              })()}
             </div>
 
-            {/* RIGHT: Top-down view — stacked, right-aligned with dimension lines */}
+            {/* RIGHT: Top-down view — stacked, proportionally scaled */}
             <div>
               <div className="text-xs text-gray-400 font-medium mb-2 text-center">Sett ovenfra</div>
-              <div style={{ background: "#f9fafb", padding: "4px 8px 8px 8px", display: "flex", flexDirection: "column", gap: "0px", alignItems: "stretch" }} className="rounded-lg">
+              <div style={{ background: "#f9fafb", padding: "8px 12px 12px 12px", display: "flex", flexDirection: "column", gap: "0px", alignItems: "flex-end" }} className="rounded-lg">
                 {/* RV label */}
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "-2px" }}>
+                <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
                   <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(37,99,235,0.6)", flexShrink: 0 }}></span>
                   <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
                 </div>
-                {/* RV image + width dimension */}
-                <div style={{ position: "relative", width: "100%" }}>
+                {/* RV top image — scaled to proportion, right-aligned */}
+                <div style={{ position: "relative", width: rvPct + "%" }}>
                   <img
                     src={rvImageTop}
-                    alt={`${category} ovenfra`}
-                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "left" }}
+                    alt={category + " ovenfra"}
+                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }}
                   />
-                  {/* Width dimension line (vertical, at front of vehicle) */}
+                  {/* Width dimension line (vertical, at left edge) */}
                   {variant.width_mm && (
                     <div style={{ position: "absolute", top: "0", left: "0", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
@@ -571,8 +569,8 @@
                     </div>
                   )}
                 </div>
-                {/* RV length dimension line (in flow, below image) */}
-                <div style={{ width: `${rvLength / 7400 * 90}%`, marginLeft: "auto", display: "flex", alignItems: "center", marginTop: "4px" }}>
+                {/* RV length dimension line — same width as image */}
+                <div style={{ width: rvPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
                   <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
                   <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
                   <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(rvLength / 1000).toFixed(2)}m</span>
@@ -581,16 +579,16 @@
                 </div>
 
                 {/* Compare vehicle label */}
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "4px", marginBottom: "0px" }}>
+                <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", marginTop: "8px", marginBottom: "2px" }}>
                   <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(194,100,30,0.6)", flexShrink: 0 }}></span>
                   <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
                 </div>
-                {/* Compare vehicle image + width dimension */}
-                <div style={{ position: "relative", width: "100%" }}>
+                {/* Compare vehicle top image — scaled to proportion, right-aligned */}
+                <div style={{ position: "relative", width: compPct + "%" }}>
                   <img
                     src={compareVehicle.imageTop}
-                    alt={`${compareVehicle.name} ovenfra`}
-                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "left" }}
+                    alt={compareVehicle.name + " ovenfra"}
+                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }}
                   />
                   {/* Width dimension line */}
                   {compareVehicle.width_mm && (
@@ -603,8 +601,8 @@
                     </div>
                   )}
                 </div>
-                {/* Compare vehicle length dimension line (in flow, below image) */}
-                <div style={{ width: `${compareVehicle.length_mm / 7400 * 90}%`, marginLeft: "auto", display: "flex", alignItems: "center", marginTop: "4px" }}>
+                {/* Compare vehicle length dimension line — same width as image */}
+                <div style={{ width: compPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
                   <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
                   <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
                   <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(compareVehicle.length_mm / 1000).toFixed(2)}m</span>
