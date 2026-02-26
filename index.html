@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BobilDB — Bobiler og Campingvogner i Norge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a5a' },
+            accent: { 400: '#fb923c', 500: '#f97316', 600: '#ea580c' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div id="root"></div>
+  <script>
+    // === INLINE DATA ===
+    const manufacturers = [
+      { id: "hymer", name: "Hymer", slug: "hymer", country: "Tyskland", website_url: "https://www.hymer.com/no/nb", description: "HYMER er en av Europas ledende produsenter av bobiler og campingvogner, grunnlagt i 1957 i Bad Waldsee, Tyskland." },
+      { id: "adria", name: "Adria", slug: "adria", country: "Slovenia", website_url: "https://no.adria-mobil.com", description: "Adria Mobil er en slovensk produsent av bobiler og campingvogner, grunnlagt i 1965. Kjent for innovativt design og god verdi." }
+    ];
+    const modelSeries = [
+      { id: "hymer-venture-s", manufacturer_id: "hymer", name: "Venture S", full_name: "HYMER Venture S", slug: "hymer-venture-s", vehicle_type: "bobil", category: "delintegrert", description: "HYMER Venture S definerer en ny kjøretøykategori – en innovativ bobil som oppfyller de strengeste krav til design og funksjon. Den setter nye standarder ved å kombinere et karakteristisk utseende og et smalt karosseri med sjenerøst med plass på innsiden.", source_url: "https://www.hymer.com/no/nb/bobiler/hymer-venture-s", badge: null, price_from_nok: 3288000, hero_image: "https://www.hymer.com/hymer/produktbilder/2020_01/produktbilder/motorhomes/freisteller_motorcaravans/image-thumb__56584__wls-teaser-large/hy_venture_s.webp", gallery: ["https://www.hymer.com/hymer/website-assets/1.produktseiten/venture-s-neu/impressiongallery/image-thumb__87757__wls-hymer-impressiongallery/lichtkonzept-01.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/venture-s-neu/impressiongallery/image-thumb__87759__wls-hymer-impressiongallery/lichtkonzept-02.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/venture-s-neu/impressiongallery/image-thumb__87758__wls-hymer-impressiongallery/lichtkonzept-03.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/venture-s-neu/impressiongallery/image-thumb__87760__wls-hymer-impressiongallery/lichtkonzept-04.webp"] },
+      { id: "hymer-b-klasse-masterline", manufacturer_id: "hymer", name: "B-Klasse MasterLine I", full_name: "HYMER B-Klasse MasterLine I", slug: "hymer-b-klasse-masterline", vehicle_type: "bobil", category: "helintegrert", description: "Hymermobilen er definisjonen på en helintegrert bobil. Med HYMER B-klasse MasterLine har vi skapt et kjøretøy som står hundre prosent i stil med dette ryktet – for reisen over alle reiser i HYMEREN blant bobilene.", source_url: "https://www.hymer.com/no/nb/bobiler/hymer-b-klasse-masterline", badge: null, price_from_nok: 2306000, hero_image: "https://www.hymer.com/hymer/produktbilder/2020_01/produktbilder/motorhomes/freisteller_motorcaravans/image-thumb__7917__wls-teaser-large/hy20_bml.webp", gallery: ["https://www.hymer.com/hymer/website-assets/1.produktseiten/b-ml-i/wohnraum/image-thumb__10819__wls-hymer-impressiongallery/hy20_bmli_890_gra_velash_i_sitzgruppe.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/b-ml-i/image-thumb__8649__wls-hymer-impressiongallery/hy20_bmli_880_graoak_ledgri_i_sitzgruppe.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/b-ml-i/image-thumb__8642__wls-hymer-impressiongallery/hy20_bmli_880_graoak_ledgri_i_kueche_2.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/b-ml-i/image-thumb__8655__wls-hymer-impressiongallery/hy20_bmli_880_graoak_ledgri_i_heck_2.webp"] },
+      { id: "hymer-b-ml-blackline", manufacturer_id: "hymer", name: "B-ML I BlackLine", full_name: "HYMER B-ML I BlackLine", slug: "hymer-b-ml-blackline", vehicle_type: "bobil", category: "helintegrert", description: "Mørk eleganse, varig inntrykk. B-ML I BlackLine er en eksklusiv spesialutgave av B-Klasse MasterLine med mørkt eksteriør og premium interiør i begrenset opplag.", source_url: "https://www.hymer.com/no/nb/bobiler/hymer-b-ml-i-blackline", badge: "Special Edition", price_from_nok: 2546000, hero_image: "https://www.hymer.com/hymer/produktbilder/2020_01/produktbilder/motorhomes/freisteller_motorcaravans/image-thumb__133566__wls-teaser-large/hy25_b-ml-i_blackline-780_freisteller.webp", gallery: ["https://www.hymer.com/hymer/website-assets/1.produktseiten/sondermodelle/b-ml-i-blackline/interieur/image-thumb__131581__wls-hymer-impressiongallery/hymer_b-ml_i_780_2026_sardinien-54--webp_1920x1920.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/sondermodelle/b-ml-i-blackline/interieur/image-thumb__131575__wls-hymer-impressiongallery/hymer_b-ml_i_780_2026_sardinien-42--webp_1920x1920-1-.webp"] },
+      { id: "hymer-exsis-i", manufacturer_id: "hymer", name: "Exsis-i", full_name: "HYMER Exsis-i", slug: "hymer-exsis-i", vehicle_type: "bobil", category: "helintegrert", description: "Lett og smidig helintegrert bobil. HYMER Exsis-i veier under 3,5 tonn og kan kjøres med vanlig førerkort klasse B – uten å gå på kompromiss med komfort og kvalitet.", source_url: "https://www.hymer.com/no/nb/bobiler/hymer-exsis-i", badge: "Under 3,5t", price_from_nok: 1890000, hero_image: "https://www.hymer.com/hymer/produktbilder/2020_01/produktbilder/motorhomes/freisteller_motorcaravans/image-thumb__7916__wls-teaser-large/hy20_exi.webp", gallery: ["https://www.hymer.com/hymer/website-assets/1.produktseiten/sondermodelle/exsis-i-pure/image-thumb__18846__wls-galleryrow/hymer_exsis-pure_joe_1-04086.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/sondermodelle/exsis-t-pure/jpg/hy21/image-thumb__18169__wls-galleryrow/hy21_exsis_580_pure_presse_dsc06218_screen-96-dpi-.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/sondermodelle/exsis-t-pure/jpg/hy21/image-thumb__18170__wls-galleryrow/hy21_exsis_580_pure_presse_dsc06176_screen-96-dpi-.webp"] },
+      { id: "hymer-tramp-s", manufacturer_id: "hymer", name: "ML-T", full_name: "HYMER ML-T", slug: "hymer-tramp-s", vehicle_type: "bobil", category: "delintegrert", description: "Nye HYMER ML-T er en ikonisk bobil som forener stil og frihet. Det kvalitative karosseriet på Mercedes-Benz Sprinter-understell legger ingen begrensninger på din reisestil: en helt ny interiørdesign og et perfeksjonert eksteriør.", source_url: "https://www.hymer.com/no/nb/bobiler/hymer-ml-t", badge: null, price_from_nok: 1655000, hero_image: "https://www.hymer.com/hymer/produktbilder/freisteller/image-thumb__71296__wls-teaser-large/ml_t_580_20373788_3_4_front.webp", gallery: ["https://www.hymer.com/hymer/website-assets/1.produktseiten/ml-t-fl/image-thumb__72678__wls-hymer-impressiongallery/ml_t_580_20373788_durchschuss_vo_hi.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/ml-t-fl/image-thumb__72671__wls-hymer-impressiongallery/ml_t_580_20373785_sitzgruppe_vorne.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/ml-t-fl/image-thumb__72680__wls-hymer-impressiongallery/ml_t_580_20373788_sitzgruppe_ob_hi.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/ml-t-fl/ml-t-570/image-thumb__80402__wls-hymer-impressiongallery/hymer-mlt_570_durchschuss-vorne-hinten.webp"] },
+      { id: "hymer-free-s", manufacturer_id: "hymer", name: "Grand Canyon S", full_name: "HYMER Grand Canyon S", slug: "hymer-free-s", vehicle_type: "campervan", category: "van", description: "Nye HYMER Grand Canyon S skaper en ny definisjon av uavhengighet. Basert på kraftige Mercedes-Benz Sprinter tar den deg til destinasjonen og videre – med uforglemmelig stil, masse power og standardutstyrt med HYMER Connect.", source_url: "https://www.hymer.com/no/nb/campervans_bybobiler/hymer-grand-canyon-s", badge: null, price_from_nok: 1180000, hero_image: "https://www.hymer.com/hymer/produktbilder/2020_01/produktbilder/campervans/freisteller_campervans/image-thumb__73680__wls-teaser-large/gcs-arktikweiss_freisteller.webp", gallery: ["https://www.hymer.com/hymer/website-assets/1.produktseiten/grand-canyon-s-fl/image-thumb__72701__wls-hymer-impressiongallery/gran_canyon_s_grau_duschuss_vo_hi.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/grand-canyon-s-fl/image-thumb__72696__wls-hymer-impressiongallery/gran_canyon_s_schwarz_durchschuss_vorne_hinten.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/grand-canyon-s-fl/image-thumb__72694__wls-hymer-impressiongallery/gran_canyon_s_grau_sitzgruppe.webp", "https://www.hymer.com/hymer/website-assets/1.produktseiten/grand-canyon-s-fl/image-thumb__72698__wls-hymer-impressiongallery/gran_canyon_s_schwarz_sitzgruppe_oben_von_hinten.webp"] },
+      { id: "adria-supersonic", manufacturer_id: "adria", name: "Supersonic", full_name: "Adria Supersonic", slug: "adria-supersonic", vehicle_type: "bobil", category: "helintegrert", description: "Sofistikert, elegant design og tidløs ytelse. Nye Adria Supersonic er toppen av tilbudet, for det beste innen design, ytelse, innovasjon og opplevelse. Inspirert av det siste innen yacht-, hjemme- og bildesign.", source_url: "https://no.adria-mobil.com/bobiler/supersonic", badge: "Toppmodell", price_from_nok: 2150000, hero_image: "https://www.adria-mobil.com/storage/73593/supersonic.jpg", gallery: ["https://www.adria-mobil.com/storage/1026/62b985bfa8c48_2214-supersonic-780-sl-dinette-straight-bc8-9696-crop.jpg", "https://www.adria-mobil.com/storage/1047/62b985d7a440b_2205-supersonic-780-sl-cockpit-jm82626.jpg", "https://www.adria-mobil.com/storage/1052/6284a5be73ddf_2234-supersonic-780-sl-kitchen-worktop-bc8-9712.jpg", "https://www.adria-mobil.com/storage/1029/6285f75570787_41-supersonic-lights-detail-dsc-9700.jpg"] },
+      { id: "adria-sonic", manufacturer_id: "adria", name: "Sonic", full_name: "Adria Sonic", slug: "adria-sonic", vehicle_type: "bobil", category: "delintegrert", description: "Den nye generasjonen Sonic – et eksepsjonelt utvalg av integrerte bobiler der du alltid reiser i førsteklasse. Smart kjøretøysdesign og moderne interiør med forskjellige møbelstiler og tekstiler, som byr på kompromissløs komfort og ytelse året rundt.", source_url: "https://no.adria-mobil.com/bobiler/sonic", badge: null, price_from_nok: 1650000, hero_image: "https://www.adria-mobil.com/storage/73589/sonic.jpg", gallery: ["https://www.adria-mobil.com/storage/13049/2015A_SONIC_SUPREME_700_DL_MORO_sitting_group_JM80167.jpg", "https://www.adria-mobil.com/storage/1927/2001B_SONIC_SUPREME_700_DL_MORO_image_interior_JM80150.jpg", "https://www.adria-mobil.com/storage/1930/2120_SONIC_PLUS_700_SL_NATURALE_Audrey_image_interior_JM82419.jpg", "https://www.adria-mobil.com/storage/1941/2001A_SONIC_SUPREME_700_DL_MORO_image_interior_JM80145.jpg"] },
+      { id: "adria-matrix", manufacturer_id: "adria", name: "Matrix", full_name: "Adria Matrix", slug: "adria-matrix", vehicle_type: "bobil", category: "delintegrert", description: "Den nye generasjonen Matrix er en halvintegrert bobil med pent design og praktiske egenskaper, utformet for å brukes året rundt.", source_url: "https://no.adria-mobil.com/bobiler/matrix", badge: null, price_from_nok: 1250000, hero_image: "https://www.adria-mobil.com/storage/73585/matrix.jpg", gallery: ["https://www.adria-mobil.com/storage/2038/1550_b_MATRIX_PLUS_670_DC_ALPINE-WHITE_Cecil_image_interior_JM48896.jpg", "https://www.adria-mobil.com/storage/2039/1504_MATRIX_SUPREME_670_SL_CASHMERE_Arno_sitting_group_BC8_5997.jpg", "https://www.adria-mobil.com/storage/2040/1575__MATRIX_SUPREME_M670_SL_MORO_Mabel_sitting_group_BC8_6096.jpg", "https://www.adria-mobil.com/storage/2041/1503_MATRIX_SUPREME_670_SL_CASHMERE_Mabel_image_interior_BC8_6062.jpg"] },
+      { id: "adria-compact", manufacturer_id: "adria", name: "Compact", full_name: "Adria Compact", slug: "adria-compact", vehicle_type: "campervan", category: "van", description: "Adrias kompakte campervan. Compact gir deg alt du trenger for helgetur eller lengre reiser i et håndterbart format.", source_url: "https://no.adria-mobil.com/campervans/compact", badge: "Bestselger", price_from_nok: 980000, hero_image: "https://www.adria-mobil.com/storage/73577/compact.jpg", gallery: [] }
+    ];
+    const modelVariants = [
+      { id: "vs-580", model_series_id: "hymer-venture-s", name: "580", full_name: "HYMER Venture S 580", price_nok: 3288000, length_mm: 6490, width_mm: 2350, height_mm: 2950, max_weight_kg: 4100, sleeping_places: 2, seating_places: 4, bed_type: "Tverrstilt dobbeltseng", chassis: "Mercedes-Benz Sprinter", engine: "2.2 CDI", horsepower: 170, transmission: "Automat" },
+      { id: "vs-600", model_series_id: "hymer-venture-s", name: "600", full_name: "HYMER Venture S 600", price_nok: 3388000, length_mm: 6990, width_mm: 2350, height_mm: 2950, max_weight_kg: 4250, sleeping_places: 3, seating_places: 4, bed_type: "Enkeltsenger bak + senkeseng", chassis: "Mercedes-Benz Sprinter", engine: "2.2 CDI", horsepower: 170, transmission: "Automat" },
+      { id: "vs-645", model_series_id: "hymer-venture-s", name: "645", full_name: "HYMER Venture S 645", price_nok: 3490000, length_mm: 7400, width_mm: 2350, height_mm: 2950, max_weight_kg: 4400, sleeping_places: 4, seating_places: 4, bed_type: "Queenseng + senkeseng", chassis: "Mercedes-Benz Sprinter", engine: "2.2 CDI", horsepower: 170, transmission: "Automat" },
+      { id: "bml-780", model_series_id: "hymer-b-klasse-masterline", name: "780", full_name: "HYMER B-Klasse ML I 780", price_nok: 2306000, length_mm: 7890, width_mm: 2350, height_mm: 3050, max_weight_kg: 4430, sleeping_places: 4, seating_places: 4, bed_type: "Enkeltsenger + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet", horsepower: 180, transmission: "Automat" },
+      { id: "bml-890", model_series_id: "hymer-b-klasse-masterline", name: "890", full_name: "HYMER B-Klasse ML I 890", price_nok: 2490000, length_mm: 8990, width_mm: 2350, height_mm: 3050, max_weight_kg: 5200, sleeping_places: 4, seating_places: 4, bed_type: "Queenseng + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet", horsepower: 180, transmission: "Automat" },
+      { id: "ex-580", model_series_id: "hymer-exsis-i", name: "580", full_name: "HYMER Exsis-i 580", price_nok: 1890000, length_mm: 5990, width_mm: 2300, height_mm: 2880, max_weight_kg: 3500, sleeping_places: 2, seating_places: 4, bed_type: "Tverrstilt dobbeltseng", chassis: "Fiat Ducato", engine: "2.2 Multijet", horsepower: 140, transmission: "Manuell" },
+      { id: "ex-670", model_series_id: "hymer-exsis-i", name: "670", full_name: "HYMER Exsis-i 670", price_nok: 2050000, length_mm: 6990, width_mm: 2300, height_mm: 2880, max_weight_kg: 3500, sleeping_places: 3, seating_places: 4, bed_type: "Enkeltsenger + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet", horsepower: 140, transmission: "Manuell" },
+      { id: "ts-585", model_series_id: "hymer-tramp-s", name: "580", full_name: "HYMER ML-T 580", price_nok: 1655000, length_mm: 5990, width_mm: 2350, height_mm: 2950, max_weight_kg: 3500, sleeping_places: 2, seating_places: 4, bed_type: "Tverrstilt dobbeltseng", chassis: "Fiat Ducato", engine: "2.2 Multijet", horsepower: 140, transmission: "Manuell" },
+      { id: "ts-695", model_series_id: "hymer-tramp-s", name: "690", full_name: "HYMER ML-T 690", price_nok: 1780000, length_mm: 6990, width_mm: 2350, height_mm: 2950, max_weight_kg: 3800, sleeping_places: 4, seating_places: 4, bed_type: "Queenseng + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet", horsepower: 140, transmission: "Manuell" },
+      { id: "fs-600", model_series_id: "hymer-free-s", name: "600", full_name: "HYMER Grand Canyon S 600", price_nok: 1180000, length_mm: 5930, width_mm: 2050, height_mm: 2650, max_weight_kg: 3500, sleeping_places: 2, seating_places: 4, bed_type: "Senkeseng", chassis: "Mercedes-Benz Sprinter", engine: "2.2 CDI", horsepower: 140, transmission: "Manuell" },
+      { id: "bbl-780", model_series_id: "hymer-b-ml-blackline", name: "780", full_name: "HYMER B-ML I BlackLine 780", price_nok: 2546000, length_mm: 7890, width_mm: 2350, height_mm: 3050, max_weight_kg: 4430, sleeping_places: 4, seating_places: 4, bed_type: "Enkeltsenger + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet", horsepower: 180, transmission: "Automat" },
+      { id: "ss-780", model_series_id: "adria-supersonic", name: "780 SL", full_name: "Adria Supersonic 780 SL", price_nok: 2150000, length_mm: 7820, width_mm: 2330, height_mm: 3020, max_weight_kg: 4400, sleeping_places: 4, seating_places: 4, bed_type: "Enkeltsenger + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 180, transmission: "Automat" },
+      { id: "ss-880", model_series_id: "adria-supersonic", name: "880 SL", full_name: "Adria Supersonic 880 SL", price_nok: 2350000, length_mm: 8820, width_mm: 2330, height_mm: 3020, max_weight_kg: 5000, sleeping_places: 4, seating_places: 4, bed_type: "Queenseng + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 180, transmission: "Automat" },
+      { id: "so-700", model_series_id: "adria-sonic", name: "700 DC", full_name: "Adria Sonic 700 DC", price_nok: 1650000, length_mm: 7390, width_mm: 2330, height_mm: 2980, max_weight_kg: 4250, sleeping_places: 4, seating_places: 4, bed_type: "Enkeltsenger + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 160, transmission: "Manuell" },
+      { id: "so-600", model_series_id: "adria-sonic", name: "600 SC", full_name: "Adria Sonic 600 SC", price_nok: 1550000, length_mm: 6590, width_mm: 2330, height_mm: 2980, max_weight_kg: 3800, sleeping_places: 2, seating_places: 4, bed_type: "Tverrstilt dobbeltseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 160, transmission: "Manuell" },
+      { id: "mx-600", model_series_id: "adria-matrix", name: "600 DT", full_name: "Adria Matrix 600 DT", price_nok: 1250000, length_mm: 6590, width_mm: 2330, height_mm: 2940, max_weight_kg: 3500, sleeping_places: 4, seating_places: 5, bed_type: "Tverrstilt dobbeltseng + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 140, transmission: "Manuell" },
+      { id: "mx-670", model_series_id: "adria-matrix", name: "670 DC", full_name: "Adria Matrix 670 DC", price_nok: 1350000, length_mm: 7260, width_mm: 2330, height_mm: 2940, max_weight_kg: 3800, sleeping_places: 4, seating_places: 4, bed_type: "Enkeltsenger + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 140, transmission: "Manuell" },
+      { id: "cp-plus", model_series_id: "adria-compact", name: "Plus SL", full_name: "Adria Compact Plus SL", price_nok: 980000, length_mm: 5990, width_mm: 2050, height_mm: 2600, max_weight_kg: 3500, sleeping_places: 2, seating_places: 4, bed_type: "Senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 140, transmission: "Manuell" },
+      { id: "cp-supreme", model_series_id: "adria-compact", name: "Supreme DL", full_name: "Adria Compact Supreme DL", price_nok: 1080000, length_mm: 6360, width_mm: 2050, height_mm: 2600, max_weight_kg: 3500, sleeping_places: 3, seating_places: 4, bed_type: "Enkeltsenger + senkeseng", chassis: "Fiat Ducato", engine: "2.2 Multijet III", horsepower: 140, transmission: "Manuell" }
+    ];
+    window.APP_DATA = { manufacturers, modelSeries, modelVariants };
+  </script>
+  <script type="text/babel" data-type="module">
+    const { useState, useEffect, useMemo, useCallback } = React;
+    const { manufacturers, modelSeries, modelVariants } = window.APP_DATA;
+
+    // ============================================================
+    // Utils
+    // ============================================================
+    function formatPrice(nok) {
+      if (!nok) return "Pris ikke tilgjengelig";
+      return "kr " + nok.toLocaleString("no-NO");
+    }
+    function formatDimension(mm) {
+      if (!mm) return "—";
+      return (mm / 10).toLocaleString("no-NO", { maximumFractionDigits: 0 }) + " cm";
+    }
+    function formatWeight(kg) {
+      if (!kg) return "—";
+      return kg.toLocaleString("no-NO") + " kg";
+    }
+    function getCategoryLabel(cat) {
+      const map = { helintegrert: "Helintegrert", delintegrert: "Delintegrert", van: "Campervan" };
+      return map[cat] || cat;
+    }
+    function getCategoryIcon(cat) {
+      if (cat === "helintegrert") return "🚌";
+      if (cat === "delintegrert") return "🚐";
+      if (cat === "van") return "🚐";
+      return "🚗";
+    }
+    function getManufacturer(id) {
+      return manufacturers.find(m => m.id === id);
+    }
+    function getVariants(seriesId) {
+      return modelVariants.filter(v => v.model_series_id === seriesId);
+    }
+    function getSeriesByManufacturer(mfgId) {
+      return modelSeries.filter(s => s.manufacturer_id === mfgId);
+    }
+
+    // ============================================================
+    // Router (hash-based)
+    // ============================================================
+    function useRouter() {
+      const [hash, setHash] = useState(window.location.hash || "#/");
+      useEffect(() => {
+        const handler = () => setHash(window.location.hash || "#/");
+        window.addEventListener("hashchange", handler);
+        return () => window.removeEventListener("hashchange", handler);
+      }, []);
+      const path = hash.replace("#", "") || "/";
+      return { path, navigate: (p) => window.location.hash = p };
+    }
+
+    // ============================================================
+    // Components
+    // ============================================================
+
+    // --- Header ---
+    function Header({ navigate }) {
+      const [menuOpen, setMenuOpen] = useState(false);
+      return (
+        <header className="bg-brand-900 text-white sticky top-0 z-50 shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-center justify-between h-16">
+              <a href="#/" onClick={() => navigate("/")} className="flex items-center gap-2 hover:opacity-90 transition">
+                <div className="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center font-bold text-sm">B</div>
+                <span className="text-xl font-bold">BobilDB</span>
+              </a>
+              <nav className="hidden md:flex items-center gap-8">
+                <a href="#/modeller" className="text-gray-200 hover:text-white transition font-medium">Modeller</a>
+                <a href="#/produsenter" className="text-gray-200 hover:text-white transition font-medium">Produsenter</a>
+              </nav>
+              <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 rounded-lg hover:bg-brand-800 transition">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {menuOpen
+                    ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
+                </svg>
+              </button>
+            </div>
+          </div>
+          {menuOpen && (
+            <div className="md:hidden border-t border-brand-800 px-4 py-3 space-y-2">
+              <a href="#/modeller" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-200 hover:text-white">Modeller</a>
+              <a href="#/produsenter" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-200 hover:text-white">Produsenter</a>
+            </div>
+          )}
+        </header>
+      );
+    }
+
+    // --- Footer ---
+    function Footer() {
+      return (
+        <footer className="bg-brand-900 text-gray-300 mt-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-7 h-7 bg-accent-500 rounded-lg flex items-center justify-center font-bold text-white text-xs">B</div>
+                  <span className="text-lg font-bold text-white">BobilDB</span>
+                </div>
+                <p className="text-sm text-gray-400">Norges mest komplette oversikt over bobiler og campingvogner. Data samles automatisk fra produsenter og forhandlere.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-3">Sider</h3>
+                <div className="space-y-2 text-sm">
+                  <a href="#/" className="block hover:text-white transition">Hjem</a>
+                  <a href="#/modeller" className="block hover:text-white transition">Alle modeller</a>
+                  <a href="#/produsenter" className="block hover:text-white transition">Produsenter</a>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-3">Datakilder</h3>
+                <div className="space-y-2 text-sm">
+                  <p>Hymer Norge</p>
+                  <p>Adria Norge</p>
+                  <p>Stamsaas Fritid</p>
+                  <p>Bobilkjeden</p>
+                </div>
+              </div>
+            </div>
+            <div className="border-t border-brand-800 mt-8 pt-6 text-sm text-gray-500 text-center">
+              BobilDB &copy; 2026 &mdash; Automatisk datainnsamling fra norske og europeiske kilder
+            </div>
+          </div>
+        </footer>
+      );
+    }
+
+    // --- ModelCard ---
+    function ModelCard({ model }) {
+      const mfg = getManufacturer(model.manufacturer_id);
+      const variants = getVariants(model.id);
+      const minPrice = model.price_from_nok;
+      return (
+        <a href={`#/modeller/${model.slug}`} className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100">
+          <div className="relative aspect-[16/10] bg-gray-100 overflow-hidden">
+            <img
+              src={model.hero_image}
+              alt={model.full_name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            {model.badge && (
+              <span className="absolute top-3 right-3 bg-accent-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow">{model.badge}</span>
+            )}
+            <span className="absolute bottom-3 left-3 bg-white/90 backdrop-blur text-xs font-medium px-2.5 py-1 rounded-full text-gray-700">
+              {getCategoryLabel(model.category)}
+            </span>
+          </div>
+          <div className="p-5">
+            <div className="flex items-start justify-between gap-2 mb-1">
+              <div>
+                <p className="text-xs text-brand-600 font-semibold uppercase tracking-wide">{mfg?.name}</p>
+                <h3 className="text-lg font-bold text-gray-900 group-hover:text-brand-700 transition">{model.name}</h3>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 line-clamp-2 mt-1 mb-3">{model.description}</p>
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+              <span className="text-brand-700 font-bold">{formatPrice(minPrice)}</span>
+              <span className="text-xs text-gray-400">{variants.length} variant{variants.length !== 1 ? "er" : ""}</span>
+            </div>
+          </div>
+        </a>
+      );
+    }
+
+    // --- SpecRow ---
+    function SpecRow({ label, value, icon }) {
+      if (!value || value === "—") return null;
+      return (
+        <div className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
+          <span className="text-lg">{icon}</span>
+          <span className="text-gray-500 text-sm flex-1">{label}</span>
+          <span className="font-semibold text-gray-900">{value}</span>
+        </div>
+      );
+    }
+
+    // --- ImageGallery ---
+    function ImageGallery({ images, modelName }) {
+      const [current, setCurrent] = useState(0);
+      if (!images || images.length === 0) return null;
+
+      const prev = () => setCurrent(i => (i - 1 + images.length) % images.length);
+      const next = () => setCurrent(i => (i + 1) % images.length);
+
+      return (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Interiørbilder</h3>
+          <div className="relative bg-gray-100 rounded-xl overflow-hidden">
+            {/* Main image */}
+            <div style={{ position: "relative", paddingBottom: "56.25%" }}>
+              <img
+                src={images[current]}
+                alt={`${modelName} - bilde ${current + 1}`}
+                style={{
+                  position: "absolute",
+                  top: 0, left: 0,
+                  width: "100%", height: "100%",
+                  objectFit: "cover"
+                }}
+                className="transition-opacity duration-300"
+              />
+            </div>
+
+            {/* Navigation arrows */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={prev}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md transition"
+                  style={{ backdropFilter: "blur(4px)" }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <button
+                  onClick={next}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md transition"
+                  style={{ backdropFilter: "blur(4px)" }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </button>
+              </>
+            )}
+
+            {/* Counter */}
+            {images.length > 1 && (
+              <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2.5 py-1 rounded-full">
+                {current + 1} / {images.length}
+              </div>
+            )}
+          </div>
+
+          {/* Thumbnail strip */}
+          {images.length > 1 && (
+            <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+              {images.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`flex-shrink-0 rounded-lg overflow-hidden border-2 transition ${i === current ? "border-brand-500" : "border-transparent opacity-60 hover:opacity-100"}`}
+                  style={{ width: "72px", height: "48px" }}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          <p className="text-xs text-gray-400 mt-2">Interiørbilder fra produsenten</p>
+        </div>
+      );
+    }
+
+    // --- SizeComparison (Image-based) ---
+
+    // Map category to image files (side profile + top-down)
+    const VEHICLE_IMAGES = {
+      helintegrert: "../images/helintegrert_transparent.png",
+      delintegrert: "../images/delintegrert_transparent.png",
+      van: "../images/van_transparent.png",
+      alkove: "../images/alkove_transparent.png",
+      tesla: "../images/tesla-model-y_transparent.png",
+    };
+    const VEHICLE_IMAGES_TOP = {
+      helintegrert: "../images/helintegrert_top.png",
+      delintegrert: "../images/delintegrert_top.png",
+      van: "../images/van_top.png",
+      alkove: "../images/alkove_top.png",
+      tesla: "../images/tesla-model-y_top.png",
+    };
+
+    // Get the image for a category
+    function getCategoryImage(cat) {
+      return VEHICLE_IMAGES[cat] || VEHICLE_IMAGES.delintegrert;
+    }
+    function getCategoryImageTop(cat) {
+      return VEHICLE_IMAGES_TOP[cat] || VEHICLE_IMAGES_TOP.delintegrert;
+    }
+
+    // Build comparison options: Tesla + all specific model variants
+    function buildCompareOptions(currentVariantId) {
+      const tesla = {
+        id: "tesla",
+        name: "Tesla Model Y",
+        shortName: "Tesla Model Y",
+        length_mm: 4750,
+        width_mm: 1978,
+        height_mm: 1624,
+        image: VEHICLE_IMAGES.tesla,
+        imageTop: VEHICLE_IMAGES_TOP.tesla,
+        group: "Personbil"
+      };
+
+      const variantOptions = modelVariants
+        .filter(v => v.id !== currentVariantId)
+        .map(v => {
+          const series = modelSeries.find(s => s.id === v.model_series_id);
+          const cat = series ? series.category : "delintegrert";
+          return {
+            id: v.id,
+            name: v.full_name,
+            shortName: v.full_name,
+            length_mm: v.length_mm,
+            width_mm: v.width_mm,
+            height_mm: v.height_mm,
+            image: getCategoryImage(cat),
+            imageTop: getCategoryImageTop(cat),
+            group: series ? getCategoryLabel(series.category) : "Bobil"
+          };
+        });
+
+      return [tesla, ...variantOptions];
+    }
+
+    function SizeComparison({ variant, category }) {
+      const [compareId, setCompareId] = useState("tesla");
+      const [dropdownOpen, setDropdownOpen] = useState(false);
+      if (!variant || !variant.length_mm) return null;
+
+      const compareOptions = useMemo(
+        () => buildCompareOptions(variant.id),
+        [variant.id]
+      );
+      const compareVehicle = compareOptions.find(v => v.id === compareId) || compareOptions[0];
+
+      const rvLength = variant.length_mm;
+      const rvImage = VEHICLE_IMAGES[category] || VEHICLE_IMAGES.delintegrert;
+      const rvImageTop = VEHICLE_IMAGES_TOP[category] || VEHICLE_IMAGES_TOP.delintegrert;
+
+      // Group options by category for the dropdown
+      const grouped = useMemo(() => {
+        const groups = {};
+        compareOptions.forEach(v => {
+          if (!groups[v.group]) groups[v.group] = [];
+          groups[v.group].push(v);
+        });
+        return groups;
+      }, [compareOptions]);
+
+      return (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-8">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Sammenlign størrelse</h3>
+
+          {/* Vehicle selector */}
+          <div className="mb-5 relative">
+            <div className="text-xs text-gray-500 mb-2">Sammenlign med:</div>
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-800 transition"
+            >
+              <span>{compareVehicle.name}</span>
+              <svg className={`w-4 h-4 text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {dropdownOpen && (
+              <div
+                className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-72 overflow-y-auto"
+                style={{ scrollbarWidth: "thin" }}
+              >
+                {Object.entries(grouped).map(([group, vehicles]) => (
+                  <div key={group}>
+                    <div className="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wide bg-gray-50 sticky top-0">
+                      {group}
+                    </div>
+                    {vehicles.map(v => (
+                      <button
+                        key={v.id}
+                        onClick={() => { setCompareId(v.id); setDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-brand-50 transition flex items-center justify-between ${
+                          v.id === compareId ? "bg-brand-50 text-brand-700 font-medium" : "text-gray-700"
+                        }`}
+                      >
+                        <span>{v.name}</span>
+                        <span className="text-xs text-gray-400 ml-2">{(v.length_mm / 1000).toFixed(1)}m</span>
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Legend */}
+          <div className="flex flex-wrap gap-4 mb-5 text-xs">
+            <span className="flex items-center gap-1.5">
+              <span className="w-4 h-3 rounded-sm" style={{ background: "rgba(37, 99, 235, 0.5)" }}></span>
+              <span className="font-medium text-gray-700">{variant.full_name || variant.name}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-4 h-3 rounded-sm" style={{ background: "rgba(194, 100, 30, 0.45)" }}></span>
+              <span className="font-medium text-gray-500">{compareVehicle.name}</span>
+            </span>
+          </div>
+
+          {/* Two-column comparison: Side profile + Top-down */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {/* LEFT: Side profile */}
+            <div>
+              <div className="text-xs text-gray-400 font-medium mb-2 text-center">Sideprofil</div>
+              <div style={{ position: "relative", background: "#f9fafb" }} className="rounded-lg overflow-hidden">
+                <img
+                  src={rvImage}
+                  alt={category}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    height: "auto",
+                    filter: "drop-shadow(0 0 5px rgba(37,99,235,0.4)) drop-shadow(0 0 1px rgba(37,99,235,0.6))",
+                    opacity: 0.7
+                  }}
+                />
+                <img
+                  src={compareVehicle.image}
+                  alt={compareVehicle.name}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    filter: "drop-shadow(0 0 5px rgba(194,100,30,0.4)) drop-shadow(0 0 1px rgba(194,100,30,0.6))",
+                    opacity: 0.4
+                  }}
+                />
+              </div>
+              <div className="border-t-2 border-gray-300 mt-0"></div>
+            </div>
+
+            {/* RIGHT: Top-down view — stacked, right-aligned with dimension lines */}
+            <div>
+              <div className="text-xs text-gray-400 font-medium mb-2 text-center">Sett ovenfra</div>
+              <div style={{ background: "#f9fafb", padding: "4px 8px 8px 8px", display: "flex", flexDirection: "column", gap: "0px", alignItems: "stretch" }} className="rounded-lg">
+                {/* RV label */}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "-2px" }}>
+                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(37,99,235,0.6)", flexShrink: 0 }}></span>
+                  <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
+                </div>
+                {/* RV image + width dimension */}
+                <div style={{ position: "relative", width: "100%" }}>
+                  <img
+                    src={rvImageTop}
+                    alt={`${category} ovenfra`}
+                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "left" }}
+                  />
+                  {/* Width dimension line (vertical, at front of vehicle) */}
+                  {variant.width_mm && (
+                    <div style={{ position: "absolute", top: "0", left: "0", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                      <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(variant.width_mm / 1000).toFixed(2)}m</span>
+                      <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                      <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                    </div>
+                  )}
+                </div>
+                {/* RV length dimension line (in flow, below image) */}
+                <div style={{ width: `${rvLength / 7400 * 90}%`, marginLeft: "auto", display: "flex", alignItems: "center", marginTop: "4px" }}>
+                  <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
+                  <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                  <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(rvLength / 1000).toFixed(2)}m</span>
+                  <div style={{ flex: 1, height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
+                  <div style={{ width: "1px", height: "10px", background: "rgba(37,99,235,0.6)" }}></div>
+                </div>
+
+                {/* Compare vehicle label */}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "4px", marginBottom: "0px" }}>
+                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(194,100,30,0.6)", flexShrink: 0 }}></span>
+                  <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
+                </div>
+                {/* Compare vehicle image + width dimension */}
+                <div style={{ position: "relative", width: "100%" }}>
+                  <img
+                    src={compareVehicle.imageTop}
+                    alt={`${compareVehicle.name} ovenfra`}
+                    style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "left" }}
+                  />
+                  {/* Width dimension line */}
+                  {compareVehicle.width_mm && (
+                    <div style={{ position: "absolute", top: "0", left: "0", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                      <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(compareVehicle.width_mm / 1000).toFixed(2)}m</span>
+                      <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                      <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                    </div>
+                  )}
+                </div>
+                {/* Compare vehicle length dimension line (in flow, below image) */}
+                <div style={{ width: `${compareVehicle.length_mm / 7400 * 90}%`, marginLeft: "auto", display: "flex", alignItems: "center", marginTop: "4px" }}>
+                  <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
+                  <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                  <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", padding: "0 5px", whiteSpace: "nowrap" }}>{(compareVehicle.length_mm / 1000).toFixed(2)}m</span>
+                  <div style={{ flex: 1, height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                  <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Dimension comparison cards */}
+          <div className="grid grid-cols-3 gap-3 mt-4">
+            <div className="bg-gray-50 rounded-lg p-3 text-center">
+              <div className="text-xs text-gray-500 mb-1">Lengde</div>
+              <div className="text-sm font-bold text-gray-900">{(rvLength / 1000).toFixed(2)}m</div>
+              <div className="text-xs text-gray-400 mt-0.5">{rvLength > compareVehicle.length_mm ? "+" : ""}{((rvLength - compareVehicle.length_mm) / 1000).toFixed(2)}m</div>
+            </div>
+            {(variant.width_mm) && (
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="text-xs text-gray-500 mb-1">Bredde</div>
+                <div className="text-sm font-bold text-gray-900">{(variant.width_mm / 1000).toFixed(2)}m</div>
+                <div className="text-xs text-gray-400 mt-0.5">{variant.width_mm > compareVehicle.width_mm ? "+" : ""}{((variant.width_mm - compareVehicle.width_mm) / 1000).toFixed(2)}m</div>
+              </div>
+            )}
+            {(variant.height_mm) && (
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="text-xs text-gray-500 mb-1">Høyde</div>
+                <div className="text-sm font-bold text-gray-900">{(variant.height_mm / 1000).toFixed(2)}m</div>
+                <div className="text-xs text-gray-400 mt-0.5">{variant.height_mm > compareVehicle.height_mm ? "+" : ""}{((variant.height_mm - compareVehicle.height_mm) / 1000).toFixed(2)}m</div>
+              </div>
+            )}
+          </div>
+
+          {/* Comparison vehicle dimensions */}
+          <div className="grid grid-cols-3 gap-3 mt-1">
+            <div className="text-center">
+              <div className="text-xs text-gray-400">{compareVehicle.shortName}: {(compareVehicle.length_mm / 1000).toFixed(2)}m</div>
+            </div>
+            {(variant.width_mm && compareVehicle.width_mm) && (
+              <div className="text-center">
+                <div className="text-xs text-gray-400">{(compareVehicle.width_mm / 1000).toFixed(2)}m</div>
+              </div>
+            )}
+            {(variant.height_mm && compareVehicle.height_mm) && (
+              <div className="text-center">
+                <div className="text-xs text-gray-400">{(compareVehicle.height_mm / 1000).toFixed(2)}m</div>
+              </div>
+            )}
+          </div>
+
+          <p className="text-xs text-gray-400 mt-4 text-center">
+            Illustrasjonene er generiske for hver bobiltype og representerer ikke det nøyaktige utseendet til den aktuelle modellen.
+          </p>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // Pages
+    // ============================================================
+
+    // --- Home Page ---
+    function HomePage() {
+      const categories = [
+        { id: "helintegrert", label: "Helintegrert", desc: "Premium komfort med integrert førerkabin", count: modelSeries.filter(m => m.category === "helintegrert").length },
+        { id: "delintegrert", label: "Delintegrert", desc: "Allsidig med separat førerkabin", count: modelSeries.filter(m => m.category === "delintegrert").length },
+        { id: "van", label: "Campervan", desc: "Kompakt og smidig for aktive reisende", count: modelSeries.filter(m => m.category === "van").length },
+      ];
+      const featured = modelSeries.slice(0, 3);
+
+      return (
+        <div className="fade-in">
+          {/* Hero */}
+          <section className="relative bg-brand-900 text-white overflow-hidden">
+            <div className="absolute inset-0 opacity-20">
+              <img src="https://www.adria-mobil.com/storage/10936/responsive-images/matrix-cover-mobile___media_library_original_820_1180.jpg" className="w-full h-full object-cover" alt="" />
+            </div>
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-32">
+              <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
+                Finn din drømme-<br /><span className="text-accent-400">bobil</span>
+              </h1>
+              <p className="text-lg md:text-xl text-gray-300 max-w-2xl mb-8">
+                Norges mest komplette database over bobiler og campingvogner.
+                Sammenlign spesifikasjoner fra {manufacturers.length} produsenter og {modelSeries.length} modellserier.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a href="#/modeller" className="inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-lg transition shadow-lg shadow-accent-500/25">
+                  Utforsk modeller
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                </a>
+                <a href="#/produsenter" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-lg transition backdrop-blur">
+                  Se produsenter
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* Stats */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
+            <div className="bg-white rounded-xl shadow-lg p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-extrabold text-brand-700">{manufacturers.length}</div>
+                <div className="text-sm text-gray-500 mt-1">Produsenter</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-extrabold text-brand-700">{modelSeries.length}</div>
+                <div className="text-sm text-gray-500 mt-1">Modellserier</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-extrabold text-brand-700">{modelVariants.length}</div>
+                <div className="text-sm text-gray-500 mt-1">Planløsninger</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-extrabold text-brand-700">Daglig</div>
+                <div className="text-sm text-gray-500 mt-1">Oppdatering</div>
+              </div>
+            </div>
+          </section>
+
+          {/* Categories */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Utforsk etter type</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {categories.map(cat => (
+                <a key={cat.id} href={`#/modeller?kategori=${cat.id}`}
+                  className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition border border-gray-100 hover:border-brand-200">
+                  <div className="text-3xl mb-3">{getCategoryIcon(cat.id)}</div>
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-brand-700 transition">{cat.label}</h3>
+                  <p className="text-sm text-gray-500 mt-1">{cat.desc}</p>
+                  <p className="text-sm font-semibold text-brand-600 mt-3">{cat.count} modeller &rarr;</p>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          {/* Featured */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-gray-900">Utvalgte modeller</h2>
+              <a href="#/modeller" className="text-brand-600 hover:text-brand-700 font-semibold text-sm">Se alle &rarr;</a>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {featured.map(m => <ModelCard key={m.id} model={m} />)}
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    // --- Models Listing ---
+    function ModelsPage() {
+      const [category, setCategory] = useState("alle");
+      const [sort, setSort] = useState("name");
+      const [search, setSearch] = useState("");
+
+      // Parse initial category from URL
+      useEffect(() => {
+        const params = new URLSearchParams(window.location.hash.split("?")[1] || "");
+        if (params.get("kategori")) setCategory(params.get("kategori"));
+      }, []);
+
+      const filtered = useMemo(() => {
+        let result = [...modelSeries];
+        if (category !== "alle") result = result.filter(m => m.category === category);
+        if (search) {
+          const q = search.toLowerCase();
+          result = result.filter(m => m.full_name.toLowerCase().includes(q) || m.description?.toLowerCase().includes(q));
+        }
+        if (sort === "name") result.sort((a, b) => a.full_name.localeCompare(b.full_name));
+        if (sort === "price-low") result.sort((a, b) => (a.price_from_nok || 0) - (b.price_from_nok || 0));
+        if (sort === "price-high") result.sort((a, b) => (b.price_from_nok || 0) - (a.price_from_nok || 0));
+        return result;
+      }, [category, sort, search]);
+
+      const categories = [
+        { id: "alle", label: "Alle" },
+        { id: "helintegrert", label: "Helintegrert" },
+        { id: "delintegrert", label: "Delintegrert" },
+        { id: "van", label: "Campervan" },
+      ];
+
+      return (
+        <div className="fade-in max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Alle modeller</h1>
+          <p className="text-gray-500 mb-8">{modelSeries.length} modellserier fra {manufacturers.length} produsenter</p>
+
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Søk etter modell..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition"
+              />
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setCategory(cat.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                    category === cat.id
+                      ? "bg-brand-600 text-white shadow-sm"
+                      : "bg-white text-gray-600 border border-gray-200 hover:border-brand-300 hover:text-brand-600"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="px-4 py-2.5 border border-gray-200 rounded-lg bg-white text-sm focus:ring-2 focus:ring-brand-500 outline-none"
+            >
+              <option value="name">Sorter: Navn</option>
+              <option value="price-low">Pris: Lav til høy</option>
+              <option value="price-high">Pris: Høy til lav</option>
+            </select>
+          </div>
+
+          {/* Results */}
+          {filtered.length === 0 ? (
+            <div className="text-center py-16 text-gray-400">
+              <p className="text-lg">Ingen modeller funnet</p>
+              <p className="text-sm mt-1">Prøv å endre søk eller filtre</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map(m => <ModelCard key={m.id} model={m} />)}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // --- Model Detail ---
+    function ModelDetailPage({ slug }) {
+      const model = modelSeries.find(m => m.slug === slug);
+      if (!model) return <NotFound message="Modellen ble ikke funnet" />;
+
+      const mfg = getManufacturer(model.manufacturer_id);
+      const variants = getVariants(model.id);
+      const [selectedVariant, setSelectedVariant] = useState(variants[0] || null);
+
+      return (
+        <div className="fade-in">
+          {/* Breadcrumb */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
+            <nav className="text-sm text-gray-500 flex items-center gap-2">
+              <a href="#/" className="hover:text-brand-600 transition">Hjem</a>
+              <span>/</span>
+              <a href="#/modeller" className="hover:text-brand-600 transition">Modeller</a>
+              <span>/</span>
+              <span className="text-gray-900 font-medium">{model.full_name}</span>
+            </nav>
+          </div>
+
+          {/* Hero section */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Image */}
+              <div className="relative rounded-2xl overflow-hidden bg-gray-100 aspect-[16/10]">
+                <img
+                  src={model.hero_image}
+                  alt={model.full_name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+                {model.badge && (
+                  <span className="absolute top-4 right-4 bg-accent-500 text-white text-sm font-semibold px-3 py-1.5 rounded-full shadow">{model.badge}</span>
+                )}
+              </div>
+
+              {/* Info */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <a href={`#/produsenter/${mfg?.slug}`} className="text-brand-600 font-semibold text-sm uppercase tracking-wide hover:text-brand-700 transition">{mfg?.name}</a>
+                  <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-0.5 rounded-full">{getCategoryLabel(model.category)}</span>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">{model.full_name}</h1>
+                <div className="bg-gray-50 border-l-4 border-gray-300 rounded-r-lg p-4 mb-6">
+                  <p className="text-xs text-gray-400 mb-1.5 uppercase tracking-wide">Fra produsenten</p>
+                  <p className="text-gray-600 text-base leading-relaxed italic">{model.description}</p>
+                  <a href={model.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-500 hover:text-brand-700 mt-2 inline-block">Les mer på {getManufacturer(model.manufacturer_id)?.name}s nettside &rarr;</a>
+                </div>
+
+                <div className="bg-brand-50 rounded-xl p-5 mb-6">
+                  <p className="text-sm text-brand-600 font-medium mb-1">Pris fra</p>
+                  <p className="text-3xl font-extrabold text-brand-800">{formatPrice(model.price_from_nok)}</p>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  {model.source_url && (
+                    <a href={model.source_url} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-2.5 rounded-lg transition">
+                      Besøk produsent
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Variants */}
+          {variants.length > 0 && (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Planløsninger ({variants.length})</h2>
+
+              {/* Variant selector tabs */}
+              <div className="flex gap-2 mb-8 flex-wrap">
+                {variants.map(v => (
+                  <button
+                    key={v.id}
+                    onClick={() => setSelectedVariant(v)}
+                    className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition ${
+                      selectedVariant?.id === v.id
+                        ? "bg-brand-600 text-white shadow-md"
+                        : "bg-white text-gray-600 border border-gray-200 hover:border-brand-300 hover:text-brand-600"
+                    }`}
+                  >
+                    {v.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Selected variant details */}
+              {selectedVariant && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 fade-in">
+                  {/* Specs */}
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">{selectedVariant.full_name}</h3>
+                    <div className="space-y-0">
+                      <SpecRow icon="💰" label="Pris" value={formatPrice(selectedVariant.price_nok)} />
+                      <SpecRow icon="📏" label="Lengde" value={formatDimension(selectedVariant.length_mm)} />
+                      <SpecRow icon="↔️" label="Bredde" value={formatDimension(selectedVariant.width_mm)} />
+                      <SpecRow icon="↕️" label="Høyde" value={formatDimension(selectedVariant.height_mm)} />
+                      <SpecRow icon="⚖️" label="Totalvekt" value={formatWeight(selectedVariant.max_weight_kg)} />
+                      <SpecRow icon="🛏️" label="Soveplasser" value={selectedVariant.sleeping_places} />
+                      <SpecRow icon="💺" label="Sitteplasser" value={selectedVariant.seating_places} />
+                      <SpecRow icon="🛌" label="Sengetype" value={selectedVariant.bed_type} />
+                    </div>
+                  </div>
+
+                  {/* Technical */}
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Teknisk</h3>
+                    <div className="space-y-0">
+                      <SpecRow icon="🚘" label="Chassis" value={selectedVariant.chassis} />
+                      <SpecRow icon="⚙️" label="Motor" value={selectedVariant.engine} />
+                      <SpecRow icon="🏎️" label="Hestekrefter" value={selectedVariant.horsepower ? `${selectedVariant.horsepower} HK` : null} />
+                      <SpecRow icon="🕹️" label="Girkasse" value={selectedVariant.transmission} />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Image gallery */}
+              <ImageGallery images={model.gallery} modelName={model.full_name} />
+
+              {/* Size visualization */}
+              {selectedVariant && (
+                <div className="mt-8">
+                  <SizeComparison variant={selectedVariant} category={model.category} />
+                </div>
+              )}
+
+              {/* Comparison table */}
+              {variants.length > 1 && (
+                <div className="mt-10">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Sammenlign varianter</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">Egenskap</th>
+                          {variants.map(v => (
+                            <th key={v.id} className="text-left py-3 px-4 text-sm font-semibold text-gray-900">{v.name}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {[
+                          { label: "Pris", fn: v => formatPrice(v.price_nok) },
+                          { label: "Lengde", fn: v => formatDimension(v.length_mm) },
+                          { label: "Bredde", fn: v => formatDimension(v.width_mm) },
+                          { label: "Totalvekt", fn: v => formatWeight(v.max_weight_kg) },
+                          { label: "Soveplasser", fn: v => v.sleeping_places || "—" },
+                          { label: "Sengetype", fn: v => v.bed_type || "—" },
+                          { label: "HK", fn: v => v.horsepower ? `${v.horsepower} HK` : "—" },
+                          { label: "Girkasse", fn: v => v.transmission || "—" },
+                        ].map(row => (
+                          <tr key={row.label} className="hover:bg-gray-50 transition">
+                            <td className="py-3 px-4 text-sm font-medium text-gray-600">{row.label}</td>
+                            {variants.map(v => (
+                              <td key={v.id} className="py-3 px-4 text-sm text-gray-900">{row.fn(v)}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // --- Manufacturers Page ---
+    function ManufacturersPage() {
+      return (
+        <div className="fade-in max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Produsenter</h1>
+          <p className="text-gray-500 mb-8">{manufacturers.length} produsenter i databasen</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {manufacturers.map(mfg => {
+              const models = getSeriesByManufacturer(mfg.id);
+              return (
+                <a key={mfg.id} href={`#/produsenter/${mfg.slug}`}
+                  className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 bg-brand-50 rounded-xl flex items-center justify-center text-2xl font-bold text-brand-700 flex-shrink-0">
+                      {mfg.name[0]}
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-xl font-bold text-gray-900 group-hover:text-brand-700 transition">{mfg.name}</h2>
+                      <p className="text-sm text-gray-500 mt-1">{mfg.country}</p>
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-2">{mfg.description}</p>
+                      <p className="text-sm font-semibold text-brand-600 mt-3">{models.length} modellserier &rarr;</p>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // --- Manufacturer Detail ---
+    function ManufacturerDetailPage({ slug }) {
+      const mfg = manufacturers.find(m => m.slug === slug);
+      if (!mfg) return <NotFound message="Produsenten ble ikke funnet" />;
+
+      const models = getSeriesByManufacturer(mfg.id);
+
+      return (
+        <div className="fade-in max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          <nav className="text-sm text-gray-500 flex items-center gap-2 mb-6">
+            <a href="#/" className="hover:text-brand-600 transition">Hjem</a>
+            <span>/</span>
+            <a href="#/produsenter" className="hover:text-brand-600 transition">Produsenter</a>
+            <span>/</span>
+            <span className="text-gray-900 font-medium">{mfg.name}</span>
+          </nav>
+
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-16 bg-brand-50 rounded-xl flex items-center justify-center text-3xl font-bold text-brand-700">
+              {mfg.name[0]}
+            </div>
+            <div>
+              <h1 className="text-3xl font-extrabold text-gray-900">{mfg.name}</h1>
+              <p className="text-gray-500">{mfg.country}</p>
+            </div>
+          </div>
+          <p className="text-gray-600 text-lg mb-8 max-w-3xl">{mfg.description}</p>
+
+          {mfg.website_url && (
+            <a href={mfg.website_url} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700 font-semibold mb-8">
+              Besøk {mfg.name}s nettside
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            </a>
+          )}
+
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{models.length} modellserier</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {models.map(m => <ModelCard key={m.id} model={m} />)}
+          </div>
+        </div>
+      );
+    }
+
+    // --- 404 ---
+    function NotFound({ message }) {
+      return (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-24 text-center">
+          <div className="text-6xl mb-4">404</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{message || "Siden ble ikke funnet"}</h1>
+          <a href="#/" className="text-brand-600 hover:text-brand-700 font-semibold mt-4 inline-block">Tilbake til forsiden &rarr;</a>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // App (Router)
+    // ============================================================
+    function App() {
+      const { path, navigate } = useRouter();
+
+      // Scroll to top on navigation
+      useEffect(() => { window.scrollTo(0, 0); }, [path]);
+
+      let page;
+      if (path === "/") {
+        page = <HomePage />;
+      } else if (path === "/modeller" || path.startsWith("/modeller?")) {
+        page = <ModelsPage />;
+      } else if (path.startsWith("/modeller/")) {
+        const slug = path.replace("/modeller/", "").split("?")[0];
+        page = <ModelDetailPage slug={slug} />;
+      } else if (path === "/produsenter") {
+        page = <ManufacturersPage />;
+      } else if (path.startsWith("/produsenter/")) {
+        const slug = path.replace("/produsenter/", "").split("?")[0];
+        page = <ManufacturerDetailPage slug={slug} />;
+      } else {
+        page = <NotFound />;
+      }
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          <Header navigate={navigate} />
+          <main className="flex-1">{page}</main>
+          <Footer />
+        </div>
+      );
+    }
+
+    // ============================================================
+    // Mount
+    // ============================================================
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
