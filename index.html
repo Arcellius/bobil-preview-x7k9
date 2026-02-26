@@ -558,9 +558,9 @@
                     alt={category + " ovenfra"}
                     style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }}
                   />
-                  {/* Width dimension line (vertical, past the hood) */}
+                  {/* Width dimension line (vertical, in front of vehicle) */}
                   {variant.width_mm && (
-                    <div style={{ position: "absolute", top: "0", left: "15%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ position: "absolute", top: "0", left: "-22px", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
                       <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
                       <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(variant.width_mm / 1000).toFixed(2)}m</span>
@@ -590,9 +590,9 @@
                     alt={compareVehicle.name + " ovenfra"}
                     style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }}
                   />
-                  {/* Width dimension line (past the hood) */}
+                  {/* Width dimension line (in front of vehicle) */}
                   {compareVehicle.width_mm && (
-                    <div style={{ position: "absolute", top: "0", left: "15%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ position: "absolute", top: "0", left: "-22px", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
                       <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
                       <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(compareVehicle.width_mm / 1000).toFixed(2)}m</span>
