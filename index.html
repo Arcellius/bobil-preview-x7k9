@@ -526,7 +526,7 @@
                 <span style={{ fontSize: "11px" }} className="text-gray-500">{variant.full_name || variant.name}</span>
               </div>
               <div style={{ position: "relative", width: rvPct + "%" }}>
-                <img src={rvImageTop} alt={category + " ovenfra"} style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }} />
+                <img src={rvImageTop} alt={category + " ovenfra"} style={{ display: "block", width: "100%", aspectRatio: variant.width_mm ? `${rvLength} / ${variant.width_mm}` : "auto", objectFit: "fill" }} />
                 {variant.width_mm && (
                   <div style={{ position: "absolute", top: (MIRROR_OFFSETS[category] || MIRROR_OFFSETS.delintegrert).top, bottom: (MIRROR_OFFSETS[category] || MIRROR_OFFSETS.delintegrert).bottom, left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
@@ -581,7 +581,7 @@
               </div>
               <div style={{ width: compPct + "%", flex: 1, display: "flex", alignItems: "flex-end" }}>
                 <div style={{ position: "relative", width: "100%" }}>
-                  <img src={compareVehicle.imageTop} alt={compareVehicle.name + " ovenfra"} style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }} />
+                  <img src={compareVehicle.imageTop} alt={compareVehicle.name + " ovenfra"} style={{ display: "block", width: "100%", aspectRatio: compareVehicle.width_mm ? `${compareVehicle.length_mm} / ${compareVehicle.width_mm}` : "auto", objectFit: "fill" }} />
                   {compareVehicle.width_mm && (
                     <div style={{ position: "absolute", top: (MIRROR_OFFSETS[compareVehicle.category] || MIRROR_OFFSETS.delintegrert).top, bottom: (MIRROR_OFFSETS[compareVehicle.category] || MIRROR_OFFSETS.delintegrert).bottom, left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
                       <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
