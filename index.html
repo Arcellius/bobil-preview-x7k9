@@ -348,6 +348,15 @@
     };
 
     // Get the image for a category
+    // Mirror offset percentages for top-down width lines (analyzed from actual image pixels)
+    const MIRROR_OFFSETS = {
+      helintegrert: { top: "11%", bottom: "6%" },
+      delintegrert: { top: "9%", bottom: "6%" },
+      van: { top: "11%", bottom: "8%" },
+      alkove: { top: "12%", bottom: "7%" },
+      tesla: { top: "10%", bottom: "4%" },
+    };
+
     function getCategoryImage(cat) {
       return VEHICLE_IMAGES[cat] || VEHICLE_IMAGES.delintegrert;
     }
@@ -366,6 +375,7 @@
         height_mm: 1624,
         image: VEHICLE_IMAGES.tesla,
         imageTop: VEHICLE_IMAGES_TOP.tesla,
+        category: "tesla",
         group: "Personbil"
       };
 
@@ -383,6 +393,7 @@
             height_mm: v.height_mm,
             image: getCategoryImage(cat),
             imageTop: getCategoryImageTop(cat),
+            category: cat,
             group: series ? getCategoryLabel(series.category) : "Bobil"
           };
         });
@@ -517,7 +528,7 @@
               <div style={{ position: "relative", width: rvPct + "%" }}>
                 <img src={rvImageTop} alt={category + " ovenfra"} style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }} />
                 {variant.width_mm && (
-                  <div style={{ position: "absolute", top: "11%", bottom: "6%", left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div style={{ position: "absolute", top: (MIRROR_OFFSETS[category] || MIRROR_OFFSETS.delintegrert).top, bottom: (MIRROR_OFFSETS[category] || MIRROR_OFFSETS.delintegrert).bottom, left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <div style={{ width: "8px", height: "1px", background: "rgba(37,99,235,0.6)" }}></div>
                     <div style={{ flex: 1, width: "1px", background: "rgba(37,99,235,0.6)" }}></div>
                     <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(37,99,235,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(variant.width_mm / 1000).toFixed(2)}m</span>
@@ -568,17 +579,19 @@
                 <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "rgba(194,100,30,0.6)", flexShrink: 0 }}></span>
                 <span style={{ fontSize: "11px" }} className="text-gray-500">{compareVehicle.name}</span>
               </div>
-              <div style={{ position: "relative", width: compPct + "%", flex: 1, display: "flex", alignItems: "flex-end" }}>
-                <img src={compareVehicle.imageTop} alt={compareVehicle.name + " ovenfra"} style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }} />
-                {compareVehicle.width_mm && (
-                  <div style={{ position: "absolute", top: "10%", bottom: "4%", left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                    <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                    <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(compareVehicle.width_mm / 1000).toFixed(2)}m</span>
-                    <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                    <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
-                  </div>
-                )}
+              <div style={{ width: compPct + "%", flex: 1, display: "flex", alignItems: "flex-end" }}>
+                <div style={{ position: "relative", width: "100%" }}>
+                  <img src={compareVehicle.imageTop} alt={compareVehicle.name + " ovenfra"} style={{ display: "block", width: "100%", height: "auto", objectFit: "contain", objectPosition: "right" }} />
+                  {compareVehicle.width_mm && (
+                    <div style={{ position: "absolute", top: (MIRROR_OFFSETS[compareVehicle.category] || MIRROR_OFFSETS.delintegrert).top, bottom: (MIRROR_OFFSETS[compareVehicle.category] || MIRROR_OFFSETS.delintegrert).bottom, left: "-22px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                      <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(194,100,30,0.9)", writingMode: "vertical-rl", padding: "3px 0", whiteSpace: "nowrap" }}>{(compareVehicle.width_mm / 1000).toFixed(2)}m</span>
+                      <div style={{ flex: 1, width: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                      <div style={{ width: "8px", height: "1px", background: "rgba(194,100,30,0.6)" }}></div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div style={{ width: compPct + "%", display: "flex", alignItems: "center", marginTop: "2px" }}>
                 <div style={{ width: "1px", height: "10px", background: "rgba(194,100,30,0.6)" }}></div>
