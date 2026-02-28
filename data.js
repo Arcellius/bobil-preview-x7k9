@@ -159,7 +159,7 @@ const modelSeries = [
     full_name: "Adria Compact",
     slug: "adria-compact",
     vehicle_type: "campervan",
-    category: "van",
+    category: "delintegrert",
     description: "Adrias kompakte campervan. Compact gir deg alt du trenger for helgetur eller lengre reiser i et håndterbart format.",
     source_url: "https://no.adria-mobil.com/campervans/compact",
     badge: "Bestselger",
